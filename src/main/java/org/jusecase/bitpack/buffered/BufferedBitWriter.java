@@ -1,12 +1,12 @@
 package org.jusecase.bitpack.buffered;
 
-import org.jusecase.bitpack.BitPacker;
+import org.jusecase.bitpack.BitWriter;
 import org.jusecase.bitpack.BitProtocol;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public class BufferedBitPacker implements BitPacker {
+public class BufferedBitWriter implements BitWriter {
 
     private static final int maxWordBits = 32;
     private static final int maxWordBytes = maxWordBits / 8;
@@ -16,7 +16,7 @@ public class BufferedBitPacker implements BitPacker {
     private int scratchBits;
     private int byteCount;
 
-    public BufferedBitPacker(BitProtocol protocol, ByteBuffer buffer) {
+    public BufferedBitWriter(BitProtocol protocol, ByteBuffer buffer) {
         this.protocol = protocol;
         this.buffer = buffer;
     }
@@ -32,69 +32,69 @@ public class BufferedBitPacker implements BitPacker {
     }
 
     @Override
-    public void packBoolean(boolean value) {
+    public void writeBoolean(boolean value) {
         scratch |= (value ? 1L : 0L) << scratchBits;
         flushScratchIfRequired(1);
     }
 
     @Override
-    public void packByte(byte value) {
+    public void writeByte(byte value) {
         scratch |= (value & 0x00000000000000ffL) << scratchBits;
         flushScratchIfRequired(8);
     }
 
     @Override
-    public void packBytesNonNull(byte[] values) {
-        packInt16(values.length);
+    public void writeBytesNonNull(byte[] values) {
+        writeInt16(values.length);
         for (byte value : values) {
-            packByte(value);
+            writeByte(value);
         }
     }
 
     @Override
-    public void packInt8(int value) {
+    public void writeInt8(int value) {
         scratch |= (value & 0x00000000000000ffL) << scratchBits;
         flushScratchIfRequired(8);
     }
 
     @Override
-    public void packInt12(int value) {
+    public void writeInt12(int value) {
         scratch |= (value & 0x0000000000000fffL) << scratchBits;
         flushScratchIfRequired(12);
     }
 
     @Override
-    public void packInt16(int value) {
+    public void writeInt16(int value) {
         scratch |= (value & 0x000000000000ffffL) << scratchBits;
         flushScratchIfRequired(16);
     }
 
     @Override
-    public void packInt32(int value) {
+    public void writeInt32(int value) {
         scratch |= (value & 0x00000000ffffffffL) << scratchBits;
         flushScratchIfRequired(32);
     }
 
     @Override
-    public void packLong(long value) {
-        packInt32((int) value);
-        packInt32((int) (value >> 32));
+    public void writeLong(long value) {
+        writeInt32((int) value);
+        writeInt32((int) (value >> 32));
     }
 
     @Override
-    public void packStringNullable(String value) {
+    public void writeStringNullable(String value) {
         if (value == null) {
-            packBoolean(false);
+            writeBoolean(false);
         } else {
-            packBoolean(true);
-            packStringNonNull(value);
+            writeBoolean(true);
+            writeStringNonNull(value);
         }
     }
 
     @Override
-    public void packStringNonNull(String value) {
+    public void writeStringNonNull(String value) {
         byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-        packBytesNonNull(bytes);
+        writeBytesNonNull(bytes);
     }
 
     private void flushScratchIfRequired(int bits) {

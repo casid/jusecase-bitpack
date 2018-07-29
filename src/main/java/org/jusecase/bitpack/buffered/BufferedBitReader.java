@@ -1,12 +1,12 @@
 package org.jusecase.bitpack.buffered;
 
 import org.jusecase.bitpack.BitProtocol;
-import org.jusecase.bitpack.BitUnpacker;
+import org.jusecase.bitpack.BitReader;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public class BufferedBitUnpacker implements BitUnpacker {
+public class BufferedBitReader implements BitReader {
 
     private final BitProtocol protocol;
     private final ByteBuffer buffer;
@@ -14,7 +14,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     private long scratch;
     private int scratchBits;
 
-    public BufferedBitUnpacker(BitProtocol protocol, ByteBuffer buffer) {
+    public BufferedBitReader(BitProtocol protocol, ByteBuffer buffer) {
         this.protocol = protocol;
         this.buffer = buffer;
     }
@@ -29,7 +29,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public boolean unpackBoolean() {
+    public boolean readBoolean() {
         grabBitsIfRequired(1);
         boolean result = (scratch & 1) > 0;
         dropBits(1);
@@ -38,7 +38,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public byte unpackByte() {
+    public byte readByte() {
         grabBitsIfRequired(8);
         byte result = (byte)scratch;
         dropBits(8);
@@ -47,17 +47,17 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public byte[] unpackBytesNonNull() {
-        int length = unpackInt16();
+    public byte[] readBytesNonNull() {
+        int length = readInt16();
         byte[] bytes = new byte[length];
         for (int i = 0; i < length; ++i) {
-            bytes[i] = unpackByte();
+            bytes[i] = readByte();
         }
         return bytes;
     }
 
     @Override
-    public int unpackInt8() {
+    public int readInt8() {
         grabBitsIfRequired(8);
         int result = (byte)scratch;
         dropBits(8);
@@ -66,7 +66,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public int unpackInt12() {
+    public int readInt12() {
         grabBitsIfRequired(12);
         int result = (int)scratch & 0x00000fff;
         if ((result & 0x00000800) == 0x00000800) {
@@ -78,7 +78,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public int unpackInt16() {
+    public int readInt16() {
         grabBitsIfRequired(16);
         int result = (int)scratch & 0x0000ffff;
         if ((result & 0x00008000) == 0x00008000) {
@@ -90,7 +90,7 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public int unpackInt32() {
+    public int readInt32() {
         grabBitsIfRequired(32);
         int result = (int)scratch;
         dropBits(32);
@@ -99,25 +99,25 @@ public class BufferedBitUnpacker implements BitUnpacker {
     }
 
     @Override
-    public long unpackLong() {
-        long a = unpackInt32();
-        long b = unpackInt32();
+    public long readLong() {
+        long a = readInt32();
+        long b = readInt32();
         return (a & 0x00000000FFFFFFFFL) | (b << 32);
     }
 
     @Override
-    public String unpackStringNullable() {
-        boolean isNonNull = unpackBoolean();
+    public String readStringNullable() {
+        boolean isNonNull = readBoolean();
         if (isNonNull) {
-            return unpackStringNonNull();
+            return readStringNonNull();
         } else {
             return null;
         }
     }
 
     @Override
-    public String unpackStringNonNull() {
-        byte[] bytes = unpackBytesNonNull();
+    public String readStringNonNull() {
+        byte[] bytes = readBytesNonNull();
         return new String(bytes, StandardCharsets.UTF_8);
     }
 

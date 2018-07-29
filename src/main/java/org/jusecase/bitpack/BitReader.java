@@ -5,41 +5,41 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public interface BitUnpacker {
+public interface BitReader {
 
     BitProtocol getProtocol();
 
-    boolean unpackBoolean();
+    boolean readBoolean();
 
-    byte unpackByte();
+    byte readByte();
 
-    byte[] unpackBytesNonNull();
+    byte[] readBytesNonNull();
 
-    int unpackInt8();
+    int readInt8();
 
-    int unpackInt12();
+    int readInt12();
 
-    int unpackInt16();
+    int readInt16();
 
-    int unpackInt32();
+    int readInt32();
 
-    long unpackLong();
+    long readLong();
 
-    String unpackStringNullable();
+    String readStringNullable();
 
-    String unpackStringNonNull();
+    String readStringNonNull();
 
-    default <T> T unpackObjectNullable(Class<T> objectClass) {
-        boolean isPresent = unpackBoolean();
+    default <T> T readObjectNullable(Class<T> objectClass) {
+        boolean isPresent = readBoolean();
         if (isPresent) {
-            return unpackObjectNonNull(objectClass);
+            return readObjectNonNull(objectClass);
         } else {
             return null;
         }
     }
 
     @SuppressWarnings("unchecked")
-    default <T> T unpackObjectNonNull(Class<T> objectClass) {
+    default <T> T readObjectNonNull(Class<T> objectClass) {
         BitSerializer<?> serializer = getProtocol().getSerializer(objectClass);
         if (serializer == null) {
             throw new NullPointerException("No serializer found for class " + objectClass);
@@ -47,8 +47,8 @@ public interface BitUnpacker {
         return (T) serializer.deserialize(this);
     }
 
-    default <T> List<T> unpackObjectsWithSameTypeAsList(Class<T> sameType) {
-        int size = unpackInt32();
+    default <T> List<T> readObjectsWithSameTypeAsList(Class<T> sameType) {
+        int size = readInt32();
         if (size < 0) {
             return null;
         }
@@ -58,18 +58,18 @@ public interface BitUnpacker {
         }
 
         List<T> result = new ArrayList<>(size);
-        unpackObjectsWithSameType(sameType, result, size);
+        readObjectsWithSameType(sameType, result, size);
         return result;
     }
 
-    default <T> void unpackObjectsWithSameType(Class<T> sameType, Collection<T> result, int size) {
+    default <T> void readObjectsWithSameType(Class<T> sameType, Collection<T> result, int size) {
         for (int i = 0; i < size; ++i) {
-            result.add(unpackObjectNullable(sameType));
+            result.add(readObjectNullable(sameType));
         }
     }
 
-    default <T> List<T> unpackObjectsWithDifferentTypesAsList() {
-        int size = unpackInt32();
+    default <T> List<T> readObjectsWithDifferentTypesAsList() {
+        int size = readInt32();
         if (size < 0) {
             return null;
         }
@@ -79,19 +79,19 @@ public interface BitUnpacker {
         }
 
         List<T> result = new ArrayList<>(size);
-        unpackObjectsWithDifferentTypes(result, size);
+        readObjectsWithDifferentTypes(result, size);
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    default <T> void unpackObjectsWithDifferentTypes(Collection<T> result, int size) {
+    default <T> void readObjectsWithDifferentTypes(Collection<T> result, int size) {
         for (int i = 0; i < size; ++i) {
-            int type = unpackInt8();
+            int type = readInt8();
             if (type == -1) {
                 result.add(null);
             } else {
                 Class<?> subClass = getProtocol().getBitTypes().getClassForType(type);
-                result.add((T) unpackObjectNonNull(subClass));
+                result.add((T) readObjectNonNull(subClass));
             }
         }
     }

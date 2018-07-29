@@ -1,8 +1,8 @@
 package org.jusecase.bitpack;
 
 import org.junit.Before;
-import org.jusecase.bitpack.buffered.BufferedBitPacker;
-import org.jusecase.bitpack.buffered.BufferedBitUnpacker;
+import org.jusecase.bitpack.buffered.BufferedBitWriter;
+import org.jusecase.bitpack.buffered.BufferedBitReader;
 
 import java.lang.reflect.ParameterizedType;
 import java.nio.ByteBuffer;
@@ -14,8 +14,8 @@ public abstract class BitPackAndUnpackObjectTest<T> {
     protected T deserializedObject;
 
     protected BitProtocol protocol;
-    protected BitPacker writer;
-    protected BitUnpacker reader;
+    protected BitWriter writer;
+    protected BitReader reader;
 
     private ByteBuffer buffer;
 
@@ -24,8 +24,8 @@ public abstract class BitPackAndUnpackObjectTest<T> {
         protocol = new BasicBitProtocol();
 
         buffer = ByteBuffer.allocateDirect(1500);
-        writer = new BufferedBitPacker(protocol, buffer);
-        reader = new BufferedBitUnpacker(protocol, buffer);
+        writer = new BufferedBitWriter(protocol, buffer);
+        reader = new BufferedBitReader(protocol, buffer);
 
         object = newObject();
     }
@@ -45,11 +45,11 @@ public abstract class BitPackAndUnpackObjectTest<T> {
 
     @SuppressWarnings("unchecked")
     protected void whenEntityIsSerializedAndDeserialized() {
-        writer.packObjectNonNull(object);
+        writer.writeObjectNonNull(object);
         writer.flush();
 
         buffer.rewind();
-        deserializedObject = (T)reader.unpackObjectNonNull(object.getClass());
+        deserializedObject = (T)reader.readObjectNonNull(object.getClass());
     }
 
     protected void thenEntitySerializationWorks() {

@@ -33,16 +33,16 @@ public class BitPackAndUnpackObjectDummyTest extends BitPackAndUnpackObjectTest<
     public static class DummySerializer implements BitSerializer<Dummy> {
 
         @Override
-        public void serialize(BitPacker packer, Dummy object) {
-            packer.packInt32(object.x);
-            packer.packInt32(object.y);
+        public void serialize(BitWriter writer, Dummy object) {
+            writer.writeInt32(object.x);
+            writer.writeInt32(object.y);
         }
 
         @Override
-        public Dummy deserialize(BitUnpacker unpacker) {
+        public Dummy deserialize(BitReader reader) {
             Dummy dummy = new Dummy();
-            dummy.x = unpacker.unpackInt32();
-            dummy.y = unpacker.unpackInt32();
+            dummy.x = reader.readInt32();
+            dummy.y = reader.readInt32();
             return dummy;
         }
     }

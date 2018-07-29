@@ -69,18 +69,18 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
     public static class TurnSerializer implements BitSerializer<Turn> {
 
         @Override
-        public void serialize(BitPacker packer, Turn object) {
-            packer.packInt8(object.playerId);
-            packer.packInt32(object.turnNumber);
-            packer.packObjectsWithSameType(object.sameRequests);
+        public void serialize(BitWriter writer, Turn object) {
+            writer.writeInt8(object.playerId);
+            writer.writeInt32(object.turnNumber);
+            writer.writeObjectsWithSameType(object.sameRequests);
         }
 
         @Override
-        public Turn deserialize(BitUnpacker unpacker) {
+        public Turn deserialize(BitReader reader) {
             Turn turn = new Turn();
-            turn.playerId = unpacker.unpackInt8();
-            turn.turnNumber = unpacker.unpackInt32();
-            turn.sameRequests = unpacker.unpackObjectsWithSameTypeAsList(SameRequest.class);
+            turn.playerId = reader.readInt8();
+            turn.turnNumber = reader.readInt32();
+            turn.sameRequests = reader.readObjectsWithSameTypeAsList(SameRequest.class);
             return turn;
         }
     }
@@ -113,14 +113,14 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
     public static class SameRequestSerializer implements BitSerializer<SameRequest> {
 
         @Override
-        public void serialize(BitPacker packer, SameRequest object) {
-            packer.packLong(object.seed);
+        public void serialize(BitWriter writer, SameRequest object) {
+            writer.writeLong(object.seed);
         }
 
         @Override
-        public SameRequest deserialize(BitUnpacker unpacker) {
+        public SameRequest deserialize(BitReader reader) {
             SameRequest request = new SameRequest();
-            request.seed = unpacker.unpackLong();
+            request.seed = reader.readLong();
             return request;
         }
     }

@@ -73,18 +73,18 @@ public class BitPackAndUnpackObjectCollection_DifferentTypesTest extends BitPack
     public static class TurnSerializer implements BitSerializer<Turn> {
 
         @Override
-        public void serialize(BitPacker packer, Turn object) {
-            packer.packInt8(object.playerId);
-            packer.packInt32(object.turnNumber);
-            packer.packObjectsWithDifferentTypes(object.simulationRequests);
+        public void serialize(BitWriter writer, Turn object) {
+            writer.writeInt8(object.playerId);
+            writer.writeInt32(object.turnNumber);
+            writer.writeObjectsWithDifferentTypes(object.simulationRequests);
         }
 
         @Override
-        public Turn deserialize(BitUnpacker unpacker) {
+        public Turn deserialize(BitReader reader) {
             Turn turn = new Turn();
-            turn.playerId = unpacker.unpackInt8();
-            turn.turnNumber = unpacker.unpackInt32();
-            turn.simulationRequests = unpacker.unpackObjectsWithDifferentTypesAsList();
+            turn.playerId = reader.readInt8();
+            turn.turnNumber = reader.readInt32();
+            turn.simulationRequests = reader.readObjectsWithDifferentTypesAsList();
             return turn;
         }
     }
@@ -120,14 +120,14 @@ public class BitPackAndUnpackObjectCollection_DifferentTypesTest extends BitPack
     public static class SimulationRequest1Serializer implements BitSerializer<SimulationRequest1> {
 
         @Override
-        public void serialize(BitPacker packer, SimulationRequest1 object) {
-            packer.packLong(object.seed);
+        public void serialize(BitWriter writer, SimulationRequest1 object) {
+            writer.writeLong(object.seed);
         }
 
         @Override
-        public SimulationRequest1 deserialize(BitUnpacker unpacker) {
+        public SimulationRequest1 deserialize(BitReader reader) {
             SimulationRequest1 object = new SimulationRequest1();
-            object.seed = unpacker.unpackLong();
+            object.seed = reader.readLong();
             return object;
         }
     }
@@ -164,16 +164,16 @@ public class BitPackAndUnpackObjectCollection_DifferentTypesTest extends BitPack
     public static class SimulationRequest2Serializer implements BitSerializer<SimulationRequest2> {
 
         @Override
-        public void serialize(BitPacker packer, SimulationRequest2 object) {
-            packer.packInt32(object.x);
-            packer.packInt32(object.y);
+        public void serialize(BitWriter writer, SimulationRequest2 object) {
+            writer.writeInt32(object.x);
+            writer.writeInt32(object.y);
         }
 
         @Override
-        public SimulationRequest2 deserialize(BitUnpacker unpacker) {
+        public SimulationRequest2 deserialize(BitReader reader) {
             SimulationRequest2 object = new SimulationRequest2();
-            object.x = unpacker.unpackInt32();
-            object.y = unpacker.unpackInt32();
+            object.x = reader.readInt32();
+            object.y = reader.readInt32();
             return object;
         }
     }
