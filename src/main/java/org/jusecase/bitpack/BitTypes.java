@@ -28,4 +28,8 @@ public class BitTypes {
     public int getTypeForInstance(Object instance) {
         return getTypeForClass(instance.getClass());
     }
+
+    public int getCount() {
+        return typeForClass.size();
+    }
 }
