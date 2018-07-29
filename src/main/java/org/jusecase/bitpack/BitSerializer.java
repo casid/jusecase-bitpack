@@ -1,6 +1,7 @@
 package org.jusecase.bitpack;
 
 public interface BitSerializer<T> {
+    T createObject();
     void serialize(BitWriter writer, T object);
-    T deserialize(BitReader reader);
+    void deserialize(BitReader reader, T object);
 }

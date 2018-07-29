@@ -40,11 +40,14 @@ public interface BitReader {
 
     @SuppressWarnings("unchecked")
     default <T> T readObjectNonNull(Class<T> objectClass) {
-        BitSerializer<?> serializer = getProtocol().getSerializer(objectClass);
+        BitSerializer<T> serializer = (BitSerializer<T>)getProtocol().getSerializer(objectClass);
         if (serializer == null) {
             throw new NullPointerException("No serializer found for class " + objectClass);
         }
-        return (T) serializer.deserialize(this);
+
+        T object = serializer.createObject();
+        serializer.deserialize(this, object);
+        return object;
     }
 
     default <T> List<T> readObjectsWithSameTypeAsList(Class<T> sameType) {
