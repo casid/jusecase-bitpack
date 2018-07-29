@@ -11,56 +11,56 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BitPackAndUnpackTest {
     BitProtocol protocol = new BasicBitProtocol();
-    BufferedBitWriter packer = new BufferedBitWriter(protocol, ByteBuffer.allocateDirect(128));
-    BufferedBitReader unpacker;
+    BufferedBitWriter writer = new BufferedBitWriter(protocol, ByteBuffer.allocateDirect(128));
+    BufferedBitReader reader;
 
 
     @Test
     public void string_nonNull() {
-        packer.writeStringNonNull("foobar");
+        writer.writeStringNonNull("foobar");
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readStringNonNull()).isEqualTo("foobar");
+        assertThat(reader.readStringNonNull()).isEqualTo("foobar");
     }
 
     @Test
     public void string_nonNull_jp() {
-        packer.writeStringNonNull("そいはらせふたいはら");
+        writer.writeStringNonNull("そいはらせふたいはら");
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readStringNonNull()).isEqualTo("そいはらせふたいはら");
+        assertThat(reader.readStringNonNull()).isEqualTo("そいはらせふたいはら");
     }
 
     @Test
     public void string_null() {
-        packer.writeStringNullable(null);
-        packer.writeStringNullable("foo");
-        packer.writeStringNullable(null);
-        packer.writeStringNullable("bar");
+        writer.writeStringNullable(null);
+        writer.writeStringNullable("foo");
+        writer.writeStringNullable(null);
+        writer.writeStringNullable("bar");
 
         whenBufferIsFlushedAndRead();
 
-        assertThat(unpacker.readStringNullable()).isEqualTo(null);
-        assertThat(unpacker.readStringNullable()).isEqualTo("foo");
-        assertThat(unpacker.readStringNullable()).isEqualTo(null);
-        assertThat(unpacker.readStringNullable()).isEqualTo("bar");
+        assertThat(reader.readStringNullable()).isEqualTo(null);
+        assertThat(reader.readStringNullable()).isEqualTo("foo");
+        assertThat(reader.readStringNullable()).isEqualTo(null);
+        assertThat(reader.readStringNullable()).isEqualTo("bar");
     }
 
     @Test
     public void integrationTest1() {
-        packer.writeInt32(0xcdcdcdce);
-        packer.writeInt8(2);
-        packer.writeLong(2935298735982L);
+        writer.writeInt32(0xcdcdcdce);
+        writer.writeInt8(2);
+        writer.writeLong(2935298735982L);
 
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readInt32()).isEqualTo(0xcdcdcdce);
-        assertThat(unpacker.readInt8()).isEqualTo(2);
-        assertThat(unpacker.readLong()).isEqualTo(2935298735982L);
+        assertThat(reader.readInt32()).isEqualTo(0xcdcdcdce);
+        assertThat(reader.readInt8()).isEqualTo(2);
+        assertThat(reader.readLong()).isEqualTo(2935298735982L);
     }
 
     @Test
     public void integrationTest2() {
         Random fixedRandom = new Random(0);
         for (int i = 0; i < 1024; ++i) {
-            packer.reset();
+            writer.reset();
             thenInt32IsPackedAndUnpackedCorrectly(fixedRandom.nextInt());
         }
     }
@@ -69,41 +69,41 @@ public class BitPackAndUnpackTest {
     public void integrationTest3() {
         Random fixedRandom = new Random(0);
         for (int i = 0; i < 1024; ++i) {
-            packer.reset();
+            writer.reset();
             thenLongIsPackedAndUnpackedCorrectly(fixedRandom.nextLong());
         }
     }
 
     @Test
     public void integrationTest4() {
-        packer.writeInt8(0);
-        packer.writeInt8(1);
-        packer.writeLong(42);
-        packer.writeInt8(2);
+        writer.writeInt8(0);
+        writer.writeInt8(1);
+        writer.writeLong(42);
+        writer.writeInt8(2);
 
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readInt8()).isEqualTo(0);
-        assertThat(unpacker.readInt8()).isEqualTo(1);
-        assertThat(unpacker.readLong()).isEqualTo(42);
-        assertThat(unpacker.readInt8()).isEqualTo(2);
+        assertThat(reader.readInt8()).isEqualTo(0);
+        assertThat(reader.readInt8()).isEqualTo(1);
+        assertThat(reader.readLong()).isEqualTo(42);
+        assertThat(reader.readInt8()).isEqualTo(2);
     }
 
     private void thenInt32IsPackedAndUnpackedCorrectly(int value) {
-        packer.writeInt32(value);
+        writer.writeInt32(value);
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readInt32()).isEqualTo(value);
+        assertThat(reader.readInt32()).isEqualTo(value);
     }
 
     private void thenLongIsPackedAndUnpackedCorrectly(long value) {
-        packer.writeLong(value);
+        writer.writeLong(value);
         whenBufferIsFlushedAndRead();
-        assertThat(unpacker.readLong()).isEqualTo(value);
+        assertThat(reader.readLong()).isEqualTo(value);
     }
 
     private void whenBufferIsFlushedAndRead() {
-        packer.flush();
-        packer.getBuffer().rewind();
-        unpacker = new BufferedBitReader(protocol, packer.getBuffer());
+        writer.flush();
+        writer.getBuffer().rewind();
+        reader = new BufferedBitReader(protocol, writer.getBuffer());
     }
 
 }
