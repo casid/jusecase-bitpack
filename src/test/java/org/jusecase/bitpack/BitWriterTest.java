@@ -1,16 +1,15 @@
 package org.jusecase.bitpack;
 
 import org.junit.Test;
-import org.jusecase.bitpack.buffered.BufferedBitWriter;
-
-import java.nio.BufferOverflowException;
-import java.nio.ByteBuffer;
+import org.jusecase.bitpack.buffer.BufferBitWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BitWriterTest {
-    private BitProtocol protocol = new BasicBitProtocol();
-    BufferedBitWriter writer = new BufferedBitWriter(protocol, ByteBuffer.allocateDirect(128));
+public abstract class BitWriterTest {
+    protected BitProtocol protocol = new AbstractBitProtocol();
+    protected BitWriter writer = createWriter();
+
+    protected abstract BitWriter createWriter();
 
     @Test
     public void boolean_false() {
@@ -159,28 +158,18 @@ public class BitWriterTest {
         thenBitsArePackedAs("01011000 00000011 11111111 11111111 11111111 11111011 11111010");
     }
 
-    @Test(expected = BufferOverflowException.class)
-    public void overflow() {
-        writer = new BufferedBitWriter(protocol, ByteBuffer.allocateDirect(4));
-        writer.writeInt32(1);
-        writer.writeInt32(1);
-    }
-
-    private void thenBitsArePackedAs(String expected) {
+    protected void thenBitsArePackedAs(String expected) {
         writer.flush();
-
-        ByteBuffer output = writer.getBuffer();
-        output.rewind();
+        byte[] bytes = getWrittenData();
 
         StringBuilder actual = new StringBuilder();
 
-        int bytes = writer.getByteCount();
-        for (int i = 0; i < bytes; ++i) {
+        for (int i = 0; i < bytes.length; ++i) {
             if (i > 0) {
                 actual.append(" ");
             }
 
-            byte bits = output.get();
+            byte bits = bytes[i];
             for (int bit = 0; bit < 8; ++bit) {
                 actual.append((bits >> bit) & 0x01);
             }
@@ -188,4 +177,6 @@ public class BitWriterTest {
 
         assertThat(actual.toString()).isEqualTo(expected);
     }
+
+    protected abstract byte[] getWrittenData();
 }

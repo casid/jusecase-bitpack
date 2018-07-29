@@ -1,8 +1,8 @@
 package org.jusecase.bitpack;
 
 import org.junit.Before;
-import org.jusecase.bitpack.buffered.BufferedBitWriter;
-import org.jusecase.bitpack.buffered.BufferedBitReader;
+import org.jusecase.bitpack.buffer.BufferBitWriter;
+import org.jusecase.bitpack.buffer.BufferBitReader;
 
 import java.lang.reflect.ParameterizedType;
 import java.nio.ByteBuffer;
@@ -21,11 +21,11 @@ public abstract class BitPackAndUnpackObjectTest<T> {
 
     @Before
     public void setUp() {
-        protocol = new BasicBitProtocol();
+        protocol = new AbstractBitProtocol();
 
         buffer = ByteBuffer.allocateDirect(1500);
-        writer = new BufferedBitWriter(protocol, buffer);
-        reader = new BufferedBitReader(protocol, buffer);
+        writer = new BufferBitWriter(protocol, buffer);
+        reader = new BufferBitReader(protocol, buffer);
 
         object = newObject();
     }

@@ -1,26 +1,15 @@
-package org.jusecase.bitpack.buffered;
+package org.jusecase.bitpack;
 
-import org.jusecase.bitpack.BitProtocol;
-import org.jusecase.bitpack.BitReader;
-
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public class BufferedBitReader implements BitReader {
-
+public abstract class AbstractBitReader implements BitReader {
     private final BitProtocol protocol;
-    private final ByteBuffer buffer;
 
     private long scratch;
     private int scratchBits;
 
-    public BufferedBitReader(BitProtocol protocol, ByteBuffer buffer) {
+    protected AbstractBitReader(BitProtocol protocol) {
         this.protocol = protocol;
-        this.buffer = buffer;
-    }
-
-    public ByteBuffer getBuffer() {
-        return buffer;
     }
 
     @Override
@@ -121,9 +110,11 @@ public class BufferedBitReader implements BitReader {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
+    protected abstract byte get();
+
     private void grabBitsIfRequired(int bits) {
         while (scratchBits < bits) {
-            scratch |= ((long)buffer.get() & 0xff) << scratchBits;
+            scratch |= ((long)get() & 0xff) << scratchBits;
             scratchBits += 8;
         }
     }

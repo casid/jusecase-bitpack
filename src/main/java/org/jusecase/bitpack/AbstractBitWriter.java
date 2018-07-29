@@ -1,24 +1,20 @@
-package org.jusecase.bitpack.buffered;
+package org.jusecase.bitpack;
 
-import org.jusecase.bitpack.BitWriter;
-import org.jusecase.bitpack.BitProtocol;
-
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public class BufferedBitWriter implements BitWriter {
+public abstract class AbstractBitWriter implements BitWriter {
+    private static final int MAX_WORD_BITS = 32;
+    private static final int MAX_WORD_BYTES = MAX_WORD_BITS / 8;
 
-    private static final int maxWordBits = 32;
-    private static final int maxWordBytes = maxWordBits / 8;
     private final BitProtocol protocol;
-    private final ByteBuffer buffer;
+
     private long scratch;
     private int scratchBits;
     private int byteCount;
+    private byte[] scratchOutput = new byte[MAX_WORD_BYTES];
 
-    public BufferedBitWriter(BitProtocol protocol, ByteBuffer buffer) {
+    protected AbstractBitWriter(BitProtocol protocol) {
         this.protocol = protocol;
-        this.buffer = buffer;
     }
 
     @Override
@@ -97,35 +93,36 @@ public class BufferedBitWriter implements BitWriter {
         writeBytesNonNull(bytes);
     }
 
-    private void flushScratchIfRequired(int bits) {
-        if ((scratchBits += bits) >= maxWordBits) {
-            flushScratch();
-            scratchBits -= maxWordBits;
-        }
-    }
-
-    private void flushScratch() {
-        int newBytes = Math.min(maxWordBytes, scratchBits / 8 + (scratchBits % 8 > 0 ? 1 : 0));
-        for (int i = 0; i < newBytes; ++i) {
-            buffer.put((byte) ((scratch >> 8 * i) & 0xff));
-        }
-
-        scratch >>= maxWordBits;
-        byteCount += newBytes;
-    }
-
-    public ByteBuffer getBuffer() {
-        return buffer;
-    }
-
     public int getByteCount() {
         return byteCount;
     }
 
     public void reset() {
-        buffer.clear();
+        resetUnderlyingData();
         scratch = 0L;
         scratchBits = 0;
         byteCount = 0;
     }
+
+    private void flushScratchIfRequired(int bits) {
+        if ((scratchBits += bits) >= MAX_WORD_BITS) {
+            flushScratch();
+            scratchBits -= MAX_WORD_BITS;
+        }
+    }
+
+    private void flushScratch() {
+        int newBytes = Math.min(MAX_WORD_BYTES, scratchBits / 8 + (scratchBits % 8 > 0 ? 1 : 0));
+        for (int i = 0; i < newBytes; ++i) {
+            scratchOutput[i] = (byte) ((scratch >> 8 * i) & 0xff);
+        }
+        put(scratchOutput, newBytes);
+
+        scratch >>= MAX_WORD_BITS;
+        byteCount += newBytes;
+    }
+
+    protected abstract void put(byte[] bytes, int count);
+
+    protected abstract void resetUnderlyingData();
 }

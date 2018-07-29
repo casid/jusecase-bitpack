@@ -1,8 +1,8 @@
 package org.jusecase.bitpack;
 
 import org.junit.Test;
-import org.jusecase.bitpack.buffered.BufferedBitWriter;
-import org.jusecase.bitpack.buffered.BufferedBitReader;
+import org.jusecase.bitpack.buffer.BufferBitWriter;
+import org.jusecase.bitpack.buffer.BufferBitReader;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
@@ -10,9 +10,9 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BitPackAndUnpackTest {
-    BitProtocol protocol = new BasicBitProtocol();
-    BufferedBitWriter writer = new BufferedBitWriter(protocol, ByteBuffer.allocateDirect(128));
-    BufferedBitReader reader;
+    BitProtocol protocol = new AbstractBitProtocol();
+    BufferBitWriter writer = new BufferBitWriter(protocol, ByteBuffer.allocateDirect(128));
+    BufferBitReader reader;
 
 
     @Test
@@ -103,7 +103,7 @@ public class BitPackAndUnpackTest {
     private void whenBufferIsFlushedAndRead() {
         writer.flush();
         writer.getBuffer().rewind();
-        reader = new BufferedBitReader(protocol, writer.getBuffer());
+        reader = new BufferBitReader(protocol, writer.getBuffer());
     }
 
 }

@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BasicBitProtocol implements BitProtocol {
+public class AbstractBitProtocol implements BitProtocol {
     private final Map<Class<?>, BitSerializer<?>> classToSerializer = new HashMap<>();
     private final BitTypes bitTypes = new BitTypes();
 

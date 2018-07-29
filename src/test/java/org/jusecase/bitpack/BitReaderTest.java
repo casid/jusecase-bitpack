@@ -1,15 +1,12 @@
 package org.jusecase.bitpack;
 
 import org.junit.Test;
-import org.jusecase.bitpack.buffered.BufferedBitReader;
-
-import java.nio.ByteBuffer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BitReaderTest {
-    private BitProtocol protocol = new BasicBitProtocol();
-    private BufferedBitReader reader;
+public abstract class BitReaderTest {
+    protected BitProtocol protocol = new AbstractBitProtocol();
+    protected BitReader reader;
 
     @Test
     public void boolean_false() {
@@ -170,19 +167,20 @@ public class BitReaderTest {
         assertThat(reader.readBoolean()).isEqualTo(true); // mark end :-)
     }
 
-    private void givenBits(String bitString) {
-        int bytes = (bitString.length() + 1) / 9;
-        ByteBuffer buffer = ByteBuffer.allocateDirect(bytes);
+    protected void givenBits(String bitString) {
+        int byteCount = (bitString.length() + 1) / 9;
+        byte[] bytes = new byte[byteCount];
 
-        for (int i = 0; i < bytes; ++i) {
+        for (int i = 0; i < byteCount; ++i) {
             byte bits = 0;
             for (int bit = 0; bit < 8; ++bit) {
                 bits |= (bitString.charAt(9 * i + bit) == '1' ? 1 : 0) << bit;
             }
-            buffer.put(bits);
+            bytes[i] = bits;
         }
 
-        buffer.rewind();
-        reader = new BufferedBitReader(protocol, buffer);
+        givenBytes(bytes);
     }
+
+    protected abstract void givenBytes(byte[] bytes);
 }
