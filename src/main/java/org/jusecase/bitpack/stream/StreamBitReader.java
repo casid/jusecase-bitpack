@@ -7,7 +7,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class StreamBitReader extends AbstractBitReader {
+public class StreamBitReader extends AbstractBitReader implements AutoCloseable {
 
     private final InputStream inputStream;
 
@@ -29,5 +29,10 @@ public class StreamBitReader extends AbstractBitReader {
             throw new RuntimeException("Failed to read from input stream", e);
         }
         return scratchBuffer[0];
+    }
+
+    @Override
+    public void close() throws IOException {
+        inputStream.close();
     }
 }

@@ -6,7 +6,7 @@ import org.jusecase.bitpack.BitProtocol;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class StreamBitWriter extends AbstractBitWriter {
+public class StreamBitWriter extends AbstractBitWriter implements AutoCloseable {
 
     private final OutputStream outputStream;
 
@@ -27,5 +27,10 @@ public class StreamBitWriter extends AbstractBitWriter {
     @Override
     protected void resetUnderlyingData() {
         throw new UnsupportedOperationException("Resetting an output stream is not supported by default");
+    }
+
+    @Override
+    public void close() throws IOException {
+        outputStream.close();
     }
 }
