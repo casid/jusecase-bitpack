@@ -1,9 +1,6 @@
 package org.jusecase.bitpack;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public interface BitReader {
 
@@ -97,5 +94,9 @@ public interface BitReader {
                 result.add((T) readObjectNonNull(subClass));
             }
         }
+    }
+
+    default UUID readUuidNonNull() {
+        return new UUID(readLong(), readLong());
     }
 }

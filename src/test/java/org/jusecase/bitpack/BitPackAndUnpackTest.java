@@ -6,6 +6,7 @@ import org.jusecase.bitpack.buffer.BufferBitReader;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,6 +43,16 @@ public class BitPackAndUnpackTest {
         assertThat(reader.readStringNullable()).isEqualTo("foo");
         assertThat(reader.readStringNullable()).isEqualTo(null);
         assertThat(reader.readStringNullable()).isEqualTo("bar");
+    }
+
+    @Test
+    public void uuid() {
+        UUID uuid = UUID.randomUUID();
+        writer.writeUuidNonNull(uuid);
+
+        whenBufferIsFlushedAndRead();
+
+        assertThat(reader.readUuidNonNull()).isEqualTo(uuid);
     }
 
     @Test

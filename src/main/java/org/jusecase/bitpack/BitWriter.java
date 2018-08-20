@@ -1,6 +1,7 @@
 package org.jusecase.bitpack;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface BitWriter {
 
@@ -72,5 +73,10 @@ public interface BitWriter {
                 }
             }
         }
+    }
+
+    default void writeUuidNonNull(UUID uuid) {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
     }
 }
