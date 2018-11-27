@@ -1,5 +1,6 @@
 package org.jusecase.bitpack;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public interface BitReader {
@@ -59,6 +60,20 @@ public interface BitReader {
 
         List<T> result = new ArrayList<>(size);
         readObjectsWithSameType(sameType, result, size);
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    default <T> T[] readObjectsWithSameTypeAsArray(Class<T> sameType) {
+        int size = readInt32();
+        if (size < 0) {
+            return null;
+        }
+
+        T[] result = (T[]) Array.newInstance(sameType, size);
+        for (int i = 0; i < size; ++i) {
+            result[i] = readObjectNullable(sameType);
+        }
         return result;
     }
 

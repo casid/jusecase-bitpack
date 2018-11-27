@@ -55,6 +55,17 @@ public interface BitWriter {
         }
     }
 
+    default void writeObjectsWithSameType(Object[] objects) {
+        if (objects == null) {
+            writeInt32(-1);
+        } else {
+            writeInt32(objects.length);
+            for (Object object : objects) {
+                writeObjectNullable(object);
+            }
+        }
+    }
+
     default void writeObjectsWithDifferentTypes(Collection<?> objects) {
         writeObjectsWithDifferentTypes(objects, getProtocol().getBitTypes());
     }
