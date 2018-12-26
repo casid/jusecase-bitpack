@@ -1,9 +1,9 @@
 package org.jusecase.bitpack;
 
 import org.junit.Test;
-import org.jusecase.bitpack.buffer.BufferBitWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 public abstract class BitWriterTest {
     protected BitProtocol protocol = new AbstractBitProtocol();
@@ -28,6 +28,55 @@ public abstract class BitWriterTest {
         writer.writeBoolean(false);
         writer.writeBoolean(true);
         thenBitsArePackedAs("01000000");
+    }
+
+    @Test
+    public void unsignedInt2_0() {
+        writer.writeUnsignedInt2(0);
+        thenBitsArePackedAs("00000000");
+    }
+
+    @Test
+    public void unsignedInt2_1() {
+        writer.writeUnsignedInt2(1);
+        thenBitsArePackedAs("10000000");
+    }
+
+    @Test
+    public void unsignedInt2_2() {
+        writer.writeUnsignedInt2(2);
+        thenBitsArePackedAs("01000000");
+    }
+
+    @Test
+    public void unsignedInt2_3() {
+        writer.writeUnsignedInt2(3);
+        thenBitsArePackedAs("11000000");
+    }
+
+    @Test
+    public void unsignedInt2_3_boolean() {
+        writer.writeUnsignedInt2(3);
+        writer.writeBoolean(true);
+        thenBitsArePackedAs("11100000");
+    }
+
+    @Test
+    public void unsignedInt2_4() {
+        Throwable throwable = catchThrowable(() -> writer.writeUnsignedInt2(4));
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessage("2 bit unsigned integer overflow: 4 is greater than max value 3");
+    }
+
+    @Test
+    public void unsignedInt2_negative() {
+        Throwable throwable = catchThrowable(() -> writer.writeUnsignedInt2(-1));
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessage("Unsigned integer must not be negative: -1 is an illegal value");
+    }
+
+    @Test
+    public void unsignedInt6() {
+        writer.writeUnsignedInt6(16);
+        thenBitsArePackedAs("00001000");
     }
 
     @Test
@@ -60,6 +109,18 @@ public abstract class BitWriterTest {
     public void int12_min() {
         writer.writeInt12(-2048);
         thenBitsArePackedAs("00000000 00010000");
+    }
+
+    @Test
+    public void int12_overflow() {
+        Throwable throwable = catchThrowable(() -> writer.writeInt12(2048));
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessage("12 bit integer overflow: 2048 is greater than max value 2047");
+    }
+
+    @Test
+    public void int12_underflow() {
+        Throwable throwable = catchThrowable(() -> writer.writeInt12(-2049));
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessage("12 bit integer underflow: -2049 is less than min value -2048");
     }
 
     @Test

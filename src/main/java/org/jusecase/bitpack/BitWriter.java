@@ -3,6 +3,7 @@ package org.jusecase.bitpack;
 import java.util.Collection;
 import java.util.UUID;
 
+@SuppressWarnings("unused") // public api
 public interface BitWriter {
 
     void flush();
@@ -14,6 +15,36 @@ public interface BitWriter {
     void writeByte(byte value);
 
     void writeBytesNonNull(byte[] values);
+
+    void writeUnsignedInt2(int value);
+
+    void writeUnsignedInt3(int value);
+
+    void writeUnsignedInt4(int value);
+
+    void writeUnsignedInt5(int value);
+
+    void writeUnsignedInt6(int value);
+
+    void writeUnsignedInt7(int value);
+
+    void writeUnsignedInt8(int value);
+
+    void writeUnsignedInt9(int value);
+
+    void writeUnsignedInt10(int value);
+
+    void writeUnsignedInt11(int value);
+
+    void writeUnsignedInt12(int value);
+
+    void writeUnsignedInt13(int value);
+
+    void writeUnsignedInt14(int value);
+
+    void writeUnsignedInt15(int value);
+
+    void writeUnsignedInt16(int value);
 
     void writeInt8(int value);
 

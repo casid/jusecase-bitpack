@@ -48,21 +48,93 @@ public abstract class AbstractBitWriter implements BitWriter {
     }
 
     @Override
+    public void writeUnsignedInt2(int value) {
+        writeUnsignedInt(value, 2);
+    }
+
+    @Override
+    public void writeUnsignedInt3(int value) {
+        writeUnsignedInt(value, 3);
+    }
+
+    @Override
+    public void writeUnsignedInt4(int value) {
+        writeUnsignedInt(value, 4);
+    }
+
+    @Override
+    public void writeUnsignedInt5(int value) {
+        writeUnsignedInt(value, 5);
+    }
+
+    @Override
+    public void writeUnsignedInt6(int value) {
+        writeUnsignedInt(value, 6);
+    }
+
+    @Override
+    public void writeUnsignedInt7(int value) {
+        writeUnsignedInt(value, 7);
+    }
+
+    @Override
+    public void writeUnsignedInt8(int value) {
+        writeUnsignedInt(value, 8);
+    }
+
+    @Override
+    public void writeUnsignedInt9(int value) {
+        writeUnsignedInt(value, 9);
+    }
+
+    @Override
+    public void writeUnsignedInt10(int value) {
+        writeUnsignedInt(value, 10);
+    }
+
+    @Override
+    public void writeUnsignedInt11(int value) {
+        writeUnsignedInt(value, 11);
+    }
+
+    @Override
+    public void writeUnsignedInt12(int value) {
+        writeUnsignedInt(value, 12);
+    }
+
+    @Override
+    public void writeUnsignedInt13(int value) {
+        writeUnsignedInt(value, 13);
+    }
+
+    @Override
+    public void writeUnsignedInt14(int value) {
+        writeUnsignedInt(value, 14);
+    }
+
+    @Override
+    public void writeUnsignedInt15(int value) {
+        writeUnsignedInt(value, 15);
+    }
+
+    @Override
+    public void writeUnsignedInt16(int value) {
+        writeUnsignedInt(value, 16);
+    }
+
+    @Override
     public void writeInt8(int value) {
-        scratch |= (value & 0x00000000000000ffL) << scratchBits;
-        flushScratchIfRequired(8);
+        writeInt(value, 8);
     }
 
     @Override
     public void writeInt12(int value) {
-        scratch |= (value & 0x0000000000000fffL) << scratchBits;
-        flushScratchIfRequired(12);
+        writeInt(value, 12);
     }
 
     @Override
     public void writeInt16(int value) {
-        scratch |= (value & 0x000000000000ffffL) << scratchBits;
-        flushScratchIfRequired(16);
+        writeInt(value, 16);
     }
 
     @Override
@@ -102,6 +174,34 @@ public abstract class AbstractBitWriter implements BitWriter {
         scratch = 0L;
         scratchBits = 0;
         byteCount = 0;
+    }
+
+    private void writeUnsignedInt(int value, int bits) {
+        if (value < 0) {
+            throw new IllegalArgumentException("Unsigned integer must not be negative: " + value + " is an illegal value");
+        }
+
+        if (value >= 1 << bits) {
+            throw new IllegalArgumentException(bits + " bit unsigned integer overflow: " + value + " is greater than max value " + ((1 << bits) - 1));
+        }
+
+        long mask = (1L << bits) - 1L;
+        scratch |= (value & mask) << scratchBits;
+        flushScratchIfRequired(bits);
+    }
+
+    private void writeInt(int value, int bits) {
+        if (value < -(1 << (bits - 1))) {
+            throw new IllegalArgumentException(bits + " bit integer underflow: " + value + " is less than min value " + (-(1 << (bits - 1))));
+        }
+
+        if (value >= 1 << (bits - 1)) {
+            throw new IllegalArgumentException(bits + " bit integer overflow: " + value + " is greater than max value " + ((1 << (bits - 1)) - 1));
+        }
+
+        long mask = (1L << bits) - 1L;
+        scratch |= (value & mask) << scratchBits;
+        flushScratchIfRequired(bits);
     }
 
     private void flushScratchIfRequired(int bits) {
