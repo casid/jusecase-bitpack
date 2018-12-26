@@ -36,6 +36,36 @@ public abstract class BitReaderTest {
     }
 
     @Test
+    public void unsignedInt2_0() {
+        givenBits("00000000");
+        assertThat(reader.readUnsignedInt2()).isEqualTo(0);
+    }
+
+    @Test
+    public void unsignedInt2_1() {
+        givenBits("10000000");
+        assertThat(reader.readUnsignedInt2()).isEqualTo(1);
+    }
+
+    @Test
+    public void unsignedInt2_2() {
+        givenBits("01000000");
+        assertThat(reader.readUnsignedInt2()).isEqualTo(2);
+    }
+
+    @Test
+    public void unsignedInt2_3() {
+        givenBits("11000000");
+        assertThat(reader.readUnsignedInt2()).isEqualTo(3);
+    }
+
+    @Test
+    public void unsignedInt6() {
+        givenBits("00001000");
+        assertThat(reader.readUnsignedInt6()).isEqualTo(16);
+    }
+
+    @Test
     public void int8_minus3() {
         givenBits("10111111");
         assertThat(reader.readInt8()).isEqualTo(-3);

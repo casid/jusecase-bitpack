@@ -46,6 +46,81 @@ public abstract class AbstractBitReader implements BitReader {
     }
 
     @Override
+    public int readUnsignedInt2() {
+        return readUnsignedInt(2);
+    }
+
+    @Override
+    public int readUnsignedInt3() {
+        return readUnsignedInt(3);
+    }
+
+    @Override
+    public int readUnsignedInt4() {
+        return readUnsignedInt(4);
+    }
+
+    @Override
+    public int readUnsignedInt5() {
+        return readUnsignedInt(5);
+    }
+
+    @Override
+    public int readUnsignedInt6() {
+        return readUnsignedInt(6);
+    }
+
+    @Override
+    public int readUnsignedInt7() {
+        return readUnsignedInt(7);
+    }
+
+    @Override
+    public int readUnsignedInt8() {
+        return readUnsignedInt(8);
+    }
+
+    @Override
+    public int readUnsignedInt9() {
+        return readUnsignedInt(9);
+    }
+
+    @Override
+    public int readUnsignedInt10() {
+        return readUnsignedInt(10);
+    }
+
+    @Override
+    public int readUnsignedInt11() {
+        return readUnsignedInt(11);
+    }
+
+    @Override
+    public int readUnsignedInt12() {
+        return readUnsignedInt(12);
+    }
+
+    @Override
+    public int readUnsignedInt13() {
+        return readUnsignedInt(13);
+    }
+
+    @Override
+    public int readUnsignedInt14() {
+        return readUnsignedInt(14);
+    }
+
+    @Override
+    public int readUnsignedInt15() {
+        return readUnsignedInt(15);
+    }
+
+    @Override
+    public int readUnsignedInt16() {
+        return readUnsignedInt(16);
+    }
+
+    @Override
     public int readInt8() {
         grabBitsIfRequired(8);
         int result = (byte)scratch;
@@ -111,6 +186,14 @@ public abstract class AbstractBitReader implements BitReader {
     }
 
     protected abstract byte get();
+
+    private int readUnsignedInt(int bits) {
+        grabBitsIfRequired(bits);
+        int mask = (1 << bits) - 1;
+        int result = (int)scratch & mask;
+        dropBits(bits);
+        return result;
+    }
 
     private void grabBitsIfRequired(int bits) {
         while (scratchBits < bits) {

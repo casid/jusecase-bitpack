@@ -3,6 +3,7 @@ package org.jusecase.bitpack;
 import java.lang.reflect.Array;
 import java.util.*;
 
+@SuppressWarnings("unused") // public api
 public interface BitReader {
 
     BitProtocol getProtocol();
@@ -12,6 +13,36 @@ public interface BitReader {
     byte readByte();
 
     byte[] readBytesNonNull();
+
+    int readUnsignedInt2();
+
+    int readUnsignedInt3();
+
+    int readUnsignedInt4();
+
+    int readUnsignedInt5();
+
+    int readUnsignedInt6();
+
+    int readUnsignedInt7();
+
+    int readUnsignedInt8();
+
+    int readUnsignedInt9();
+
+    int readUnsignedInt10();
+
+    int readUnsignedInt11();
+
+    int readUnsignedInt12();
+
+    int readUnsignedInt13();
+
+    int readUnsignedInt14();
+
+    int readUnsignedInt15();
+
+    int readUnsignedInt16();
 
     int readInt8();
 
@@ -38,7 +69,7 @@ public interface BitReader {
 
     @SuppressWarnings("unchecked")
     default <T> T readObjectNonNull(Class<T> objectClass) {
-        BitSerializer<T> serializer = (BitSerializer<T>)getProtocol().getSerializer(objectClass);
+        BitSerializer<T> serializer = (BitSerializer<T>) getProtocol().getSerializer(objectClass);
         if (serializer == null) {
             throw new NullPointerException("No serializer found for class " + objectClass);
         }
