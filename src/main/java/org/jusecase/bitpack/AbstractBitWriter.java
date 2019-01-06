@@ -49,92 +49,92 @@ public abstract class AbstractBitWriter implements BitWriter {
 
     @Override
     public void writeUnsignedInt2(int value) {
-        writeUnsignedInt(value, 2);
+        writeUnsignedInt(2, value);
     }
 
     @Override
     public void writeUnsignedInt3(int value) {
-        writeUnsignedInt(value, 3);
+        writeUnsignedInt(3, value);
     }
 
     @Override
     public void writeUnsignedInt4(int value) {
-        writeUnsignedInt(value, 4);
+        writeUnsignedInt(4, value);
     }
 
     @Override
     public void writeUnsignedInt5(int value) {
-        writeUnsignedInt(value, 5);
+        writeUnsignedInt(5, value);
     }
 
     @Override
     public void writeUnsignedInt6(int value) {
-        writeUnsignedInt(value, 6);
+        writeUnsignedInt(6, value);
     }
 
     @Override
     public void writeUnsignedInt7(int value) {
-        writeUnsignedInt(value, 7);
+        writeUnsignedInt(7, value);
     }
 
     @Override
     public void writeUnsignedInt8(int value) {
-        writeUnsignedInt(value, 8);
+        writeUnsignedInt(8, value);
     }
 
     @Override
     public void writeUnsignedInt9(int value) {
-        writeUnsignedInt(value, 9);
+        writeUnsignedInt(9, value);
     }
 
     @Override
     public void writeUnsignedInt10(int value) {
-        writeUnsignedInt(value, 10);
+        writeUnsignedInt(10, value);
     }
 
     @Override
     public void writeUnsignedInt11(int value) {
-        writeUnsignedInt(value, 11);
+        writeUnsignedInt(11, value);
     }
 
     @Override
     public void writeUnsignedInt12(int value) {
-        writeUnsignedInt(value, 12);
+        writeUnsignedInt(12, value);
     }
 
     @Override
     public void writeUnsignedInt13(int value) {
-        writeUnsignedInt(value, 13);
+        writeUnsignedInt(13, value);
     }
 
     @Override
     public void writeUnsignedInt14(int value) {
-        writeUnsignedInt(value, 14);
+        writeUnsignedInt(14, value);
     }
 
     @Override
     public void writeUnsignedInt15(int value) {
-        writeUnsignedInt(value, 15);
+        writeUnsignedInt(15, value);
     }
 
     @Override
     public void writeUnsignedInt16(int value) {
-        writeUnsignedInt(value, 16);
+        writeUnsignedInt(16, value);
     }
 
     @Override
     public void writeInt8(int value) {
-        writeInt(value, 8);
+        writeInt(8, value);
     }
 
     @Override
     public void writeInt12(int value) {
-        writeInt(value, 12);
+        writeInt(12, value);
     }
 
     @Override
     public void writeInt16(int value) {
-        writeInt(value, 16);
+        writeInt(16, value);
     }
 
     @Override
@@ -176,7 +176,8 @@ public abstract class AbstractBitWriter implements BitWriter {
         byteCount = 0;
     }
 
-    private void writeUnsignedInt(int value, int bits) {
+    @Override
+    public void writeUnsignedInt(int bits, int value) {
         if (value < 0) {
             throw new IllegalArgumentException("Unsigned integer must not be negative: " + value + " is an illegal value");
         }
@@ -190,7 +191,7 @@ public abstract class AbstractBitWriter implements BitWriter {
         flushScratchIfRequired(bits);
     }
 
-    private void writeInt(int value, int bits) {
+    private void writeInt(int bits, int value) {
         if (value < -(1 << (bits - 1))) {
             throw new IllegalArgumentException(bits + " bit integer underflow: " + value + " is less than min value " + (-(1 << (bits - 1))));
         }

@@ -16,6 +16,8 @@ public interface BitWriter {
 
     void writeBytesNonNull(byte[] values);
 
+    void writeUnsignedInt(int bits, int value);
+
     void writeUnsignedInt2(int value);
 
     void writeUnsignedInt3(int value);

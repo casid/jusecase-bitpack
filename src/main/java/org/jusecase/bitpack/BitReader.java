@@ -14,6 +14,8 @@ public interface BitReader {
 
     byte[] readBytesNonNull();
 
+    int readUnsignedInt(int bits);
+
     int readUnsignedInt2();
 
     int readUnsignedInt3();

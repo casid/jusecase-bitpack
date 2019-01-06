@@ -187,7 +187,8 @@ public abstract class AbstractBitReader implements BitReader {
 
     protected abstract byte get();
 
-    private int readUnsignedInt(int bits) {
+    @Override
+    public int readUnsignedInt(int bits) {
         grabBitsIfRequired(bits);
         int mask = (1 << bits) - 1;
         int result = (int)scratch & mask;
