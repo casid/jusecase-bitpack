@@ -1,6 +1,8 @@
 package org.jusecase.bitpack;
 
 import java.lang.reflect.Array;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 @SuppressWarnings("unused") // public api
@@ -146,5 +148,25 @@ public interface BitReader {
 
     default UUID readUuidNonNull() {
         return new UUID(readLong(), readLong());
+    }
+
+    default InetAddress readInetAddress() {
+        int length = readUnsignedInt8();
+        if (length == 0) {
+            return null;
+        }
+        if (length != 4 && length != 16) {
+            throw new IllegalArgumentException("Unknown ip address with " + length + " bytes");
+        }
+        byte[] bytes = new byte[length];
+        for (int i = 0; i < length; ++i) {
+            bytes[i] = readByte();
+        }
+
+        try {
+            return InetAddress.getByAddress(bytes);
+        } catch (UnknownHostException e) {
+            throw new IllegalArgumentException("Unknown ip address with " + length + " bytes");
+        }
     }
 }

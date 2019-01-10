@@ -1,5 +1,6 @@
 package org.jusecase.bitpack;
 
+import java.net.InetAddress;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -122,5 +123,17 @@ public interface BitWriter {
     default void writeUuidNonNull(UUID uuid) {
         writeLong(uuid.getMostSignificantBits());
         writeLong(uuid.getLeastSignificantBits());
+    }
+
+    default void writeInetAddress(InetAddress address) {
+        if (address == null) {
+            writeUnsignedInt8(0);
+        } else {
+            byte[] bytes = address.getAddress();
+            writeUnsignedInt8(bytes.length);
+            for (byte b : bytes) {
+                writeByte(b);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.jusecase.bitpack.buffer.BufferBitWriter;
 import org.jusecase.bitpack.buffer.BufferBitReader;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.UUID;
@@ -53,6 +54,36 @@ public class BitPackAndUnpackTest {
         whenBufferIsFlushedAndRead();
 
         assertThat(reader.readUuidNonNull()).isEqualTo(uuid);
+    }
+
+    @Test
+    public void inetAddress_v4() throws Exception {
+        InetAddress address = InetAddress.getByName("127.0.0.1");
+        writer.writeInetAddress(address);
+
+        whenBufferIsFlushedAndRead();
+
+        assertThat(reader.readInetAddress()).isEqualTo(address);
+    }
+
+    @Test
+    public void inetAddress_v6() throws Exception {
+        InetAddress address = InetAddress.getByName("::1");
+        writer.writeInetAddress(address);
+
+        whenBufferIsFlushedAndRead();
+
+        assertThat(reader.readInetAddress()).isEqualTo(address);
+    }
+
+    @Test
+    public void inetAddress_null() throws Exception {
+        InetAddress address = null;
+        writer.writeInetAddress(address);
+
+        whenBufferIsFlushedAndRead();
+
+        assertThat(reader.readInetAddress()).isEqualTo(address);
     }
 
     @Test
