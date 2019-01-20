@@ -2,6 +2,7 @@ package org.jusecase.bitpack;
 
 import java.lang.reflect.Array;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -168,5 +169,14 @@ public interface BitReader {
         } catch (UnknownHostException e) {
             throw new IllegalArgumentException("Unknown ip address with " + length + " bytes");
         }
+    }
+
+    default InetSocketAddress readInetSocketAddress() {
+        InetAddress inetAddress = readInetAddress();
+        if (inetAddress == null) {
+            return null;
+        }
+
+        return new InetSocketAddress(inetAddress, readUnsignedInt16());
     }
 }

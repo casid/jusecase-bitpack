@@ -1,10 +1,11 @@
 package org.jusecase.bitpack;
 
 import org.junit.Test;
-import org.jusecase.bitpack.buffer.BufferBitWriter;
 import org.jusecase.bitpack.buffer.BufferBitReader;
+import org.jusecase.bitpack.buffer.BufferBitWriter;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.UUID;
@@ -77,13 +78,23 @@ public class BitPackAndUnpackTest {
     }
 
     @Test
-    public void inetAddress_null() throws Exception {
+    public void inetAddress_null() {
         InetAddress address = null;
         writer.writeInetAddress(address);
 
         whenBufferIsFlushedAndRead();
 
         assertThat(reader.readInetAddress()).isEqualTo(address);
+    }
+
+    @Test
+    public void inetSocketAddress() throws Exception {
+        InetSocketAddress address = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 64312);
+        writer.writeInetSocketAddress(address);
+
+        whenBufferIsFlushedAndRead();
+
+        assertThat(reader.readInetSocketAddress()).isEqualTo(address);
     }
 
     @Test
