@@ -79,9 +79,7 @@ public interface BitReader {
             throw new NullPointerException("No serializer found for class " + objectClass);
         }
 
-        T object = serializer.createObject();
-        serializer.deserialize(this, object);
-        return object;
+        return serializer.deserialize(this);
     }
 
     default <T> List<T> readObjectsWithSameTypeAsList(Class<T> sameType) {
