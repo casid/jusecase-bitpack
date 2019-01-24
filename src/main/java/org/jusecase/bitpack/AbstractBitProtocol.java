@@ -32,7 +32,11 @@ public class AbstractBitProtocol implements BitProtocol {
 
     @Override
     public BitSerializer<?> getSerializer(Class<?> objectClass) {
-        return classToSerializer.get(objectClass);
+        BitSerializer<?> serializer = classToSerializer.get(objectClass);
+        if (serializer == null && objectClass.getSuperclass() != null) {
+            return getSerializer(objectClass.getSuperclass());
+        }
+        return serializer;
     }
 
     @Override
