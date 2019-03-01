@@ -16,7 +16,7 @@ public interface BitWriter {
 
     void writeByte(byte value);
 
-    void writeBytesNonNull(byte[] values);
+    void writeBytesNonNull(int lengthBits, byte[] values);
 
     void writeUnsignedInt(int bits, int value);
 
@@ -60,9 +60,9 @@ public interface BitWriter {
 
     void writeLong(long value);
 
-    void writeStringNullable(String value);
+    void writeStringNullable(int lengthBits, String value);
 
-    void writeStringNonNull(String value);
+    void writeStringNonNull(int lengthBits, String value);
 
     default void writeObjectNullable(Object object) {
         if (object == null) {
@@ -79,42 +79,47 @@ public interface BitWriter {
         serializer.serialize(this, object);
     }
 
-    default void writeObjectsWithSameType(Collection<?> objects) {
+    default void writeObjectsWithSameType(int lengthBits, Collection<?> objects) {
         if (objects == null) {
-            writeInt32(-1);
+            writeBoolean(false);
         } else {
-            writeInt32(objects.size());
+            writeBoolean(true);
+            writeUnsignedInt(lengthBits, objects.size());
             for (Object object : objects) {
                 writeObjectNullable(object);
             }
         }
     }
 
-    default void writeObjectsWithSameType(Object[] objects) {
+    default void writeObjectsWithSameType(int lengthBits, Object[] objects) {
         if (objects == null) {
-            writeInt32(-1);
+            writeBoolean(false);
         } else {
-            writeInt32(objects.length);
+            writeBoolean(true);
+            writeUnsignedInt(lengthBits, objects.length);
             for (Object object : objects) {
                 writeObjectNullable(object);
             }
         }
     }
 
-    default void writeObjectsWithDifferentTypes(Collection<?> objects) {
-        writeObjectsWithDifferentTypes(objects, getProtocol().getBitTypes());
+    default void writeObjectsWithDifferentTypes(int lengthBits, Collection<?> objects) {
+        writeObjectsWithDifferentTypes(lengthBits, objects, getProtocol().getBitTypes());
     }
 
-    default void writeObjectsWithDifferentTypes(Collection<?> objects, BitTypes types) {
+    default void writeObjectsWithDifferentTypes(int lengthBits, Collection<?> objects, BitTypes types) {
         if (objects == null) {
-            writeInt32(-1);
+            writeBoolean(false);
         } else {
-            writeInt32(objects.size());
+            int objectBits = types.getRequiredBits();
+
+            writeBoolean(true);
+            writeUnsignedInt(lengthBits, objects.size());
             for (Object object : objects) {
                 if (object == null) {
-                    writeInt8(-1);
+                    writeUnsignedInt(objectBits, 0);
                 } else {
-                    writeInt8(types.getTypeForInstance(object));
+                    writeUnsignedInt(objectBits, types.getTypeForInstance(object));
                     writeObjectNonNull(object);
                 }
             }

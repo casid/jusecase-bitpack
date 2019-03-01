@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class BitPackAndUnpackTest {
     BitProtocol protocol = new AbstractBitProtocol();
@@ -20,31 +21,37 @@ public class BitPackAndUnpackTest {
 
     @Test
     public void string_nonNull() {
-        writer.writeStringNonNull("foobar");
+        writer.writeStringNonNull(8, "foobar");
         whenBufferIsFlushedAndRead();
-        assertThat(reader.readStringNonNull()).isEqualTo("foobar");
+        assertThat(reader.readStringNonNull(8)).isEqualTo("foobar");
     }
 
     @Test
     public void string_nonNull_jp() {
-        writer.writeStringNonNull("そいはらせふたいはら");
+        writer.writeStringNonNull(8, "そいはらせふたいはら");
         whenBufferIsFlushedAndRead();
-        assertThat(reader.readStringNonNull()).isEqualTo("そいはらせふたいはら");
+        assertThat(reader.readStringNonNull(8)).isEqualTo("そいはらせふたいはら");
+    }
+
+    @Test
+    public void string_tooLong() {
+        Throwable throwable = catchThrowable(() -> writer.writeStringNonNull(2, "foobar"));
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void string_null() {
-        writer.writeStringNullable(null);
-        writer.writeStringNullable("foo");
-        writer.writeStringNullable(null);
-        writer.writeStringNullable("bar");
+        writer.writeStringNullable(8, null);
+        writer.writeStringNullable(8, "foo");
+        writer.writeStringNullable(8, null);
+        writer.writeStringNullable(8, "bar");
 
         whenBufferIsFlushedAndRead();
 
-        assertThat(reader.readStringNullable()).isEqualTo(null);
-        assertThat(reader.readStringNullable()).isEqualTo("foo");
-        assertThat(reader.readStringNullable()).isEqualTo(null);
-        assertThat(reader.readStringNullable()).isEqualTo("bar");
+        assertThat(reader.readStringNullable(8)).isEqualTo(null);
+        assertThat(reader.readStringNullable(8)).isEqualTo("foo");
+        assertThat(reader.readStringNullable(8)).isEqualTo(null);
+        assertThat(reader.readStringNullable(8)).isEqualTo("bar");
     }
 
     @Test
@@ -79,12 +86,11 @@ public class BitPackAndUnpackTest {
 
     @Test
     public void inetAddress_null() {
-        InetAddress address = null;
-        writer.writeInetAddress(address);
+        writer.writeInetAddress(null);
 
         whenBufferIsFlushedAndRead();
 
-        assertThat(reader.readInetAddress()).isEqualTo(address);
+        assertThat(reader.readInetAddress()).isEqualTo(null);
     }
 
     @Test

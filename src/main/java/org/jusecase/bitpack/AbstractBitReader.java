@@ -36,8 +36,8 @@ public abstract class AbstractBitReader implements BitReader {
     }
 
     @Override
-    public byte[] readBytesNonNull() {
-        int length = readInt16();
+    public byte[] readBytesNonNull(int lengthBits) {
+        int length = readUnsignedInt(lengthBits);
         byte[] bytes = new byte[length];
         for (int i = 0; i < length; ++i) {
             bytes[i] = readByte();
@@ -170,18 +170,18 @@ public abstract class AbstractBitReader implements BitReader {
     }
 
     @Override
-    public String readStringNullable() {
+    public String readStringNullable(int lengthBits) {
         boolean isNonNull = readBoolean();
         if (isNonNull) {
-            return readStringNonNull();
+            return readStringNonNull(lengthBits);
         } else {
             return null;
         }
     }
 
     @Override
-    public String readStringNonNull() {
-        byte[] bytes = readBytesNonNull();
+    public String readStringNonNull(int lengthBits) {
+        byte[] bytes = readBytesNonNull(lengthBits);
         return new String(bytes, StandardCharsets.UTF_8);
     }
 

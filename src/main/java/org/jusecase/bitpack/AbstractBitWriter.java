@@ -40,8 +40,8 @@ public abstract class AbstractBitWriter implements BitWriter {
     }
 
     @Override
-    public void writeBytesNonNull(byte[] values) {
-        writeInt16(values.length);
+    public void writeBytesNonNull(int lengthBits, byte[] values) {
+        writeUnsignedInt(lengthBits, values.length);
         for (byte value : values) {
             writeByte(value);
         }
@@ -150,19 +150,19 @@ public abstract class AbstractBitWriter implements BitWriter {
     }
 
     @Override
-    public void writeStringNullable(String value) {
+    public void writeStringNullable(int lengthBits, String value) {
         if (value == null) {
             writeBoolean(false);
         } else {
             writeBoolean(true);
-            writeStringNonNull(value);
+            writeStringNonNull(lengthBits, value);
         }
     }
 
     @Override
-    public void writeStringNonNull(String value) {
+    public void writeStringNonNull(int lengthBits, String value) {
         byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-        writeBytesNonNull(bytes);
+        writeBytesNonNull(lengthBits, bytes);
     }
 
     public int getByteCount() {

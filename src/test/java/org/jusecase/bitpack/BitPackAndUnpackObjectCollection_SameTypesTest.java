@@ -77,14 +77,14 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
         public void serialize(BitWriter writer, Turn object) {
             writer.writeInt8(object.playerId);
             writer.writeInt32(object.turnNumber);
-            writer.writeObjectsWithSameType(object.sameRequests);
+            writer.writeObjectsWithSameType(8, object.sameRequests);
         }
 
         @Override
         public void deserialize(BitReader reader, Turn object) {
             object.playerId = reader.readInt8();
             object.turnNumber = reader.readInt32();
-            object.sameRequests = reader.readObjectsWithSameTypeAsList(SameRequest.class);
+            object.sameRequests = reader.readObjectsWithSameTypeAsList(8, SameRequest.class);
         }
     }
 

@@ -81,14 +81,14 @@ public class BitPackAndUnpackObjectCollection_DifferentTypesTest extends BitPack
         public void serialize(BitWriter writer, Turn object) {
             writer.writeInt8(object.playerId);
             writer.writeInt32(object.turnNumber);
-            writer.writeObjectsWithDifferentTypes(object.simulationRequests);
+            writer.writeObjectsWithDifferentTypes(4, object.simulationRequests);
         }
 
         @Override
         public void deserialize(BitReader reader, Turn object) {
             object.playerId = reader.readInt8();
             object.turnNumber = reader.readInt32();
-            object.simulationRequests = reader.readObjectsWithDifferentTypesAsList();
+            object.simulationRequests = reader.readObjectsWithDifferentTypesAsList(4);
         }
     }
 

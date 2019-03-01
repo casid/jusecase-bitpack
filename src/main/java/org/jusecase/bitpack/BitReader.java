@@ -15,7 +15,7 @@ public interface BitReader {
 
     byte readByte();
 
-    byte[] readBytesNonNull();
+    byte[] readBytesNonNull(int lengthBits);
 
     int readUnsignedInt(int bits);
 
@@ -59,9 +59,9 @@ public interface BitReader {
 
     long readLong();
 
-    String readStringNullable();
+    String readStringNullable(int lengthBits);
 
-    String readStringNonNull();
+    String readStringNonNull(int lengthBits);
 
     default <T> T readObjectNullable(Class<T> objectClass) {
         boolean isPresent = readBoolean();
@@ -82,12 +82,12 @@ public interface BitReader {
         return serializer.deserialize(this);
     }
 
-    default <T> List<T> readObjectsWithSameTypeAsList(Class<T> sameType) {
-        int size = readInt32();
-        if (size < 0) {
+    default <T> List<T> readObjectsWithSameTypeAsList(int lengthBits, Class<T> sameType) {
+        if (!readBoolean()) {
             return null;
         }
 
+        int size = readUnsignedInt(lengthBits);
         if (size == 0) {
             return Collections.emptyList();
         }
@@ -98,12 +98,12 @@ public interface BitReader {
     }
 
     @SuppressWarnings("unchecked")
-    default <T> T[] readObjectsWithSameTypeAsArray(Class<T> sameType) {
-        int size = readInt32();
-        if (size < 0) {
+    default <T> T[] readObjectsWithSameTypeAsArray(int lengthBits, Class<T> sameType) {
+        if (!readBoolean()) {
             return null;
         }
 
+        int size = readUnsignedInt(lengthBits);
         T[] result = (T[]) Array.newInstance(sameType, size);
         for (int i = 0; i < size; ++i) {
             result[i] = readObjectNullable(sameType);
@@ -117,12 +117,12 @@ public interface BitReader {
         }
     }
 
-    default <T> List<T> readObjectsWithDifferentTypesAsList() {
-        int size = readInt32();
-        if (size < 0) {
+    default <T> List<T> readObjectsWithDifferentTypesAsList(int lengthBits) {
+        if (!readBoolean()) {
             return null;
         }
 
+        int size = readUnsignedInt(lengthBits);
         if (size == 0) {
             return Collections.emptyList();
         }
@@ -134,13 +134,16 @@ public interface BitReader {
 
     @SuppressWarnings("unchecked")
     default <T> void readObjectsWithDifferentTypes(Collection<T> result, int size) {
+        BitTypes bitTypes = getProtocol().getBitTypes();
+        int objectBits = bitTypes.getRequiredBits();
+
         for (int i = 0; i < size; ++i) {
-            int type = readInt8();
-            if (type == -1) {
-                result.add(null);
-            } else {
-                Class<?> subClass = getProtocol().getBitTypes().getClassForType(type);
+            int type = readUnsignedInt(objectBits);
+            if (type > 0) {
+                Class<?> subClass = bitTypes.getClassForType(type);
                 result.add((T) readObjectNonNull(subClass));
+            } else {
+                result.add(null);
             }
         }
     }

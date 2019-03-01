@@ -7,9 +7,13 @@ public class BitTypes {
     private final Map<Integer, Class<?>> classForType = new HashMap<>();
     private final Map<Class<?>, Integer> typeForClass = new HashMap<>();
 
+    private int requiredBits = 1;
+
     public void register(int type, Class<?> clazz) {
         classForType.put(type, clazz);
         typeForClass.put(clazz, type);
+
+        requiredBits = -1;
     }
 
     public Class<?> getClassForType(int type) {
@@ -31,5 +35,18 @@ public class BitTypes {
 
     public int getCount() {
         return typeForClass.size();
+    }
+
+    public int getRequiredBits() {
+        if (requiredBits < 0) {
+            int count = getCount();
+            if (count < 1) {
+                requiredBits = 1;
+            } else {
+                requiredBits = (int) Math.ceil(Math.sqrt(count));
+            }
+        }
+
+        return requiredBits;
     }
 }
