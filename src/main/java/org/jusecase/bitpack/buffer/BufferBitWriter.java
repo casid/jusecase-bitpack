@@ -3,8 +3,8 @@ package org.jusecase.bitpack.buffer;
 import org.jusecase.bitpack.AbstractBitWriter;
 import org.jusecase.bitpack.BitProtocol;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 public class BufferBitWriter extends AbstractBitWriter {
 
@@ -26,6 +26,7 @@ public class BufferBitWriter extends AbstractBitWriter {
 
     @Override
     protected void resetUnderlyingData() {
-        buffer.clear();
+        //noinspection RedundantCast to be able to compile with Java 9+
+        ((Buffer) buffer).clear();
     }
 }
