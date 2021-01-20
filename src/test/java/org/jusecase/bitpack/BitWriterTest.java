@@ -219,6 +219,24 @@ public abstract class BitWriterTest {
         thenBitsArePackedAs("01011000 00000011 11111111 11111111 11111111 11111011 11111010");
     }
 
+    @Test
+    public void hex1() {
+        writer.writeUnsignedInt(26, 22);
+        writer.writeUnsignedInt3(1);
+        writer.writeUnsignedInt3(2);
+
+        thenBitsArePackedAsHex("16 00 00 44");
+    }
+
+    @Test
+    public void hex2() {
+        writer.writeUnsignedInt(26, 22);
+        writer.writeUnsignedInt3(2);
+        writer.writeUnsignedInt3(2);
+
+        thenBitsArePackedAsHex("16 00 00 48");
+    }
+
     protected void thenBitsArePackedAs(String expected) {
         writer.flush();
         byte[] bytes = getWrittenData();
@@ -234,6 +252,24 @@ public abstract class BitWriterTest {
             for (int bit = 0; bit < 8; ++bit) {
                 actual.append((bits >> bit) & 0x01);
             }
+        }
+
+        assertThat(actual.toString()).isEqualTo(expected);
+    }
+
+    protected void thenBitsArePackedAsHex(String expected) {
+        writer.flush();
+        byte[] bytes = getWrittenData();
+
+        StringBuilder actual = new StringBuilder();
+
+        for (int i = 0; i < bytes.length; ++i) {
+            if (i > 0) {
+                actual.append(" ");
+            }
+
+            actual.append(Character.forDigit((bytes[i] >> 4) & 0xF, 16));
+            actual.append(Character.forDigit((bytes[i] & 0xF), 16));
         }
 
         assertThat(actual.toString()).isEqualTo(expected);
