@@ -11,7 +11,7 @@ public abstract class AbstractBitWriter implements BitWriter {
     private long scratch;
     private int scratchBits;
     private int byteCount;
-    private byte[] scratchOutput = new byte[MAX_WORD_BYTES];
+    private final byte[] scratchOutput = new byte[MAX_WORD_BYTES];
 
     protected AbstractBitWriter(BitProtocol protocol) {
         this.protocol = protocol;

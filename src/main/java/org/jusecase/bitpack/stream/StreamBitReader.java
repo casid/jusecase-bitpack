@@ -10,7 +10,7 @@ public class StreamBitReader extends AbstractBitReader implements AutoCloseable 
 
     private final InputStream inputStream;
 
-    private byte[] scratchBuffer = new byte[1];
+    private final byte[] scratchBuffer = new byte[1];
 
     public StreamBitReader(BitProtocol protocol, InputStream inputStream) {
         super(protocol);

@@ -2,10 +2,8 @@ package org.jusecase.bitpack.buffer;
 
 import org.jusecase.bitpack.AbstractBitReader;
 import org.jusecase.bitpack.BitProtocol;
-import org.jusecase.bitpack.BitReader;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 public class BufferBitReader extends AbstractBitReader {
 
