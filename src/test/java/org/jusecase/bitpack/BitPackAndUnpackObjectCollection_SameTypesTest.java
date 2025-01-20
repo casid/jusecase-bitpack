@@ -69,11 +69,6 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
     public static class TurnSerializer implements BitSerializer<Turn> {
 
         @Override
-        public Turn createObject() {
-            return new Turn();
-        }
-
-        @Override
         public void serialize(BitWriter writer, Turn object) {
             writer.writeInt8(object.playerId);
             writer.writeInt32(object.turnNumber);
@@ -81,10 +76,17 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
         }
 
         @Override
-        public void deserialize(BitReader reader, Turn object) {
+        public Turn deserialize(BitReader reader) {
+            Turn object = new Turn();
             object.playerId = reader.readInt8();
             object.turnNumber = reader.readInt32();
             object.sameRequests = reader.readObjectsWithSameTypeAsList(8, SameRequest.class);
+            return object;
+        }
+
+        @Override
+        public Class<Turn> getObjectClass() {
+            return Turn.class;
         }
     }
 
@@ -116,18 +118,20 @@ public class BitPackAndUnpackObjectCollection_SameTypesTest extends BitPackAndUn
     public static class SameRequestSerializer implements BitSerializer<SameRequest> {
 
         @Override
-        public SameRequest createObject() {
-            return new SameRequest();
-        }
-
-        @Override
         public void serialize(BitWriter writer, SameRequest object) {
             writer.writeLong(object.seed);
         }
 
         @Override
-        public void deserialize(BitReader reader, SameRequest object) {
+        public SameRequest deserialize(BitReader reader) {
+            SameRequest object = new SameRequest();
             object.seed = reader.readLong();
+            return object;
+        }
+
+        @Override
+        public Class<SameRequest> getObjectClass() {
+            return SameRequest.class;
         }
     }
 }
